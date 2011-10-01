@@ -10,6 +10,7 @@ import javax.vecmath.Vector4f;
 import jrtr.Shape;
 import jrtr.VertexData;
 
+
 public class Torus extends Shape {
 	public Torus(float r, float R) {
 		super(grid(r,R, 5,10));
@@ -33,6 +34,7 @@ public class Torus extends Shape {
 		points
 			.glueX()
 			.glueY();
+		return points.vertexData();
 	}
 	
 }

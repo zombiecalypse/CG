@@ -68,23 +68,21 @@ public class VertexData {
 	
 	public void addElement(float f[], Semantic s, int i)
 	{
-		if(f.length==n*i) 
+		assert f.length == n*i : "array is not aligned";
+		VertexElement vertexElement = new VertexElement();
+		vertexElement.data = f;
+		vertexElement.semantic = s;
+		vertexElement.nComponents = i;
+		
+		// Make sure POSITION is the last element in the list. This guarantees
+		// that rendering works as expected (i.e., vertex attributes are set
+		// before the vertex is rendered).
+		if(s == Semantic.POSITION)
 		{
-			VertexElement vertexElement = new VertexElement();
-			vertexElement.data = f;
-			vertexElement.semantic = s;
-			vertexElement.nComponents = i;
-			
-			// Make sure POSITION is the last element in the list. This guarantees
-			// that rendering works as expected (i.e., vertex attributes are set
-			// before the vertex is rendered).
-			if(s == Semantic.POSITION)
-			{
-				vertexElements.addLast(vertexElement);
-			} else
-			{
-				vertexElements.addFirst(vertexElement);
-			}
+			vertexElements.addLast(vertexElement);
+		} else
+		{
+			vertexElements.addFirst(vertexElement);
 		}	
 	}
 	
