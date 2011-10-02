@@ -3,27 +3,41 @@ package shapes;
 import java.util.Iterator;
 
 import javax.vecmath.AxisAngle4f;
+import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
-public class CircleBrush implements Iterator<Vector4f>, Iterable<Vector4f> {
+public class CircleBrush implements Iterator<Vector3f>, Iterable<Vector3f> {
 
 	private static final float TwoPI = 6.2831853f; // Mmmmh, two pies.
-	private Vector4f center;
+	private static final Vector3f Z = new Vector3f(0,0,1);
+	private Vector3f center;
 	private int upto;
 	private float radius;
 	private int index;
 	private AxisAngle4f rotation;
 	private float step;
+	private Vector3f axis;
+	private Matrix3f secondaryRotationMatrix;
 
-	public CircleBrush(float radius, int steps, Vector4f center, Vector3f orientation) {
+	public CircleBrush(float radius, int steps, Vector3f center, Vector3f orientation) {
+		assert ! orientation.epsilonEquals(new Vector3f(0,0,0), 0.1f);
 		this.center = center;
-		this.rotation = new AxisAngle4f(orientation.x, orientation.y, orientation.z, 0);
+		this.axis = orientation;
+		this.axis.normalize();
+		this.rotation = new AxisAngle4f(0,0,1, 0);
 		this.upto = steps;
 		this.step = TwoPI /steps;
 		this.radius = radius;
 		this.index = 0;
+		
+
+		Vector3f secondaryAxis = new Vector3f();
+		secondaryAxis.cross(Z, axis);
+		AxisAngle4f secondaryRotation = new AxisAngle4f(secondaryAxis,(float) Math.acos(Z.dot(axis)));
+		this.secondaryRotationMatrix = new Matrix3f();
+		secondaryRotationMatrix.set(secondaryRotation);
 	}
 	@Override
 	public boolean hasNext() {
@@ -31,13 +45,18 @@ public class CircleBrush implements Iterator<Vector4f>, Iterable<Vector4f> {
 	}
 
 	@Override
-	public Vector4f next() { 
-		Vector4f here = new Vector4f(1,0,0,0);
-		Matrix4f rotationMatrix = new Matrix4f();
-		this.rotation.angle += this.step; 
-		rotationMatrix.setRotation(this.rotation);
+	public Vector3f next() { 
+		Vector3f here = new Vector3f(1,0,0);
+		here.scale(radius);
+		
+		Matrix3f rotationMatrix = new Matrix3f();
+		rotationMatrix.setIdentity();
+		rotationMatrix.set(this.rotation);
 		rotationMatrix.transform(here);
+		secondaryRotationMatrix.transform(here);
 		here.add(this.center);
+		this.rotation.angle += this.step; 
+		this.index++;
 		return here;
 	}
 
@@ -45,7 +64,7 @@ public class CircleBrush implements Iterator<Vector4f>, Iterable<Vector4f> {
 	public void remove() {	}
 	
 	@Override
-	public Iterator<Vector4f> iterator() {
+	public Iterator<Vector3f> iterator() {
 		return this;
 	}
 
