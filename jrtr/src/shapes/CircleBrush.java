@@ -11,7 +11,7 @@ import javax.vecmath.Vector4f;
 public class CircleBrush implements Iterator<Vector3f>, Iterable<Vector3f> {
 
 	private static final float TwoPI = 6.2831853f; // Mmmmh, two pies.
-	private static final Vector3f Z = new Vector3f(0,0,1);
+	public static final Vector3f Z = new Vector3f(0,0,1);
 	private Vector3f center;
 	private int upto;
 	private float radius;
@@ -21,6 +21,12 @@ public class CircleBrush implements Iterator<Vector3f>, Iterable<Vector3f> {
 	private Vector3f axis;
 	private Matrix3f secondaryRotationMatrix;
 
+	public CircleBrush(float radius, int steps, Vector3f center) {
+		this(radius, steps, center, Z);
+	}
+	public CircleBrush(float radius, int steps) {
+		this(radius, steps, new Vector3f(0,0,0));
+	}
 	public CircleBrush(float radius, int steps, Vector3f center, Vector3f orientation) {
 		assert ! orientation.epsilonEquals(new Vector3f(0,0,0), 0.1f);
 		this.center = center;
