@@ -1,4 +1,4 @@
-package shapes;
+package aaron.shapes;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -6,7 +6,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.JFrame;
+import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
 
 import jrtr.GLRenderPanel;
 import jrtr.RenderContext;
@@ -22,6 +24,7 @@ public class Main {
 	static SimpleSceneManager sceneManager;
 	static ComplexShape shape;
 	static float angle;
+	private static Matrix4f positionOfCar;
 
 	/**
 	 * An extension of {@link GLRenderPanel} or {@link SWRenderPanel} to 
@@ -41,7 +44,7 @@ public class Main {
 	
 			// Register a timer task
 		    Timer timer = new Timer();
-		    angle = 0.01f;
+		    angle = 0.0f;
 		    timer.scheduleAtFixedRate(new AnimationTask(), 0, 10);
 		}
 	}
@@ -55,14 +58,13 @@ public class Main {
 		public void run()
 		{
 			// Update transformation
-    		Matrix4f t = shape.getTransformation();
-    		Matrix4f rotX = new Matrix4f();
-    		rotX.rotX(angle);
-    		Matrix4f rotY = new Matrix4f();
-    		rotY.rotY(angle);
-    		t.mul(rotX);
-    		t.mul(rotY);
-    		shape.setTransformation(t);
+    		Matrix4f t = new Matrix4f();
+    		t.setIdentity();
+    		Matrix4f rotZ = new Matrix4f();
+    		rotZ.rotZ(angle+0.005f);
+    		t.mul(rotZ);
+    		shape.update();
+    		sceneManager.transformShape(shape, t);
     		
     		// Trigger redrawing of the render window
     		renderPanel.getCanvas().repaint(); 
@@ -90,15 +92,23 @@ public class Main {
 	{		
 		
 				
+		Matrix4f appealing = new Matrix4f();
+		Matrix4f rotX = new Matrix4f();
+		Matrix4f rotY = new Matrix4f();
+		rotX.rotX(-1.0f);
+		rotY.rotY(0.1f);
+		appealing.mul(rotX,rotY);
+		appealing.setTranslation(new Vector3f(0,0,-30));
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager();
-		Shape a = new Torus(0.5f,1f);
-		Shape b = new Cylinder(0.5f,5);
-		shape = new ComplexShape();
-		shape
-			.add(b).at(1,0,0).done()
-			.add(a).done();
-		sceneManager.addShape(shape);
+		sceneManager.getCamera().setCameraMatrix(appealing);
+		shape = new Car();
+		positionOfCar = new Matrix4f();
+		positionOfCar.setIdentity();
+		AxisAngle4f rot = new AxisAngle4f(0,0,1,1.5707963f);
+		positionOfCar.set(rot);
+		positionOfCar.setTranslation( new Vector3f(10,0,0));
+		sceneManager.addShape(shape, positionOfCar);
 
 		// Make a render panel. The init function of the renderPanel
 		// (see above) will be called back for initialization.

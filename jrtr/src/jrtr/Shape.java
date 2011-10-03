@@ -1,12 +1,15 @@
 package jrtr;
 import javax.vecmath.*;
 
+import aaron.shapes.IShape;
+
+
 /**
  * Represents a 3D shape. The shape currently just consists
  * of its vertex data. It should later be extended to include
  * material properties, shaders, etc.
  */
-public class Shape {
+public class Shape implements IShape {
 
 	/**
 	 * Make a shape from {@link VertexData}.
@@ -57,4 +60,7 @@ public class Shape {
 
 	protected VertexData vertexData;
 	private Matrix4f t;
+	
+	@Override
+	public void update() {	}
 }

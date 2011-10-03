@@ -1,4 +1,4 @@
-package shapes;
+package aaron.shapes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +8,8 @@ import java.util.Map;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
-import shapes.Grid.Point;
+import aaron.shapes.Grid.Point;
+
 
 import jrtr.VertexData;
 

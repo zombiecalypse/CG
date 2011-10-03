@@ -1,4 +1,4 @@
-package shapes;
+package aaron.shapes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,8 @@ import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
-import shapes.ComplexShape.Adder;
+import aaron.shapes.ComplexShape.Adder;
+
 
 import jrtr.RenderItem;
 import jrtr.Shape;
@@ -19,33 +20,33 @@ import jrtr.VertexData;
  * @author Aaron
  * 
  */
-public class ComplexShape {
+public class ComplexShape implements IShape {
 	private static final Vector3f Z = new Vector3f(0, 0, 1);
 	private static final Vector3f X = new Vector3f(1, 0, 0);
-	private List<Shape> subshapes;
-	private Matrix4f transformation;
+	private List<IShape> subshapes;
+	protected Matrix4f transformation;
 
 	public ComplexShape() {
-		subshapes = new ArrayList<Shape>();
+		subshapes = new ArrayList<IShape>();
 		transformation = new Matrix4f();
 		transformation.setIdentity();
 	}
 
-	public List<Shape> getShapes() {
-		return new ArrayList<Shape>(subshapes);
+	public List<IShape> getShapes() {
+		return new ArrayList<IShape>(subshapes);
 	}
 
-	public Adder add(Shape s) {
+	public Adder add(IShape s) {
 		return new Adder(s);
 	}
 
 	class Adder {
-		private Shape shape;
+		private IShape shape;
 		private Vector3f position;
 		private Vector3f zOrient;
 		private Vector3f xOrient;
 
-		public Adder(Shape s) {
+		public Adder(IShape s) {
 			this.shape = s;
 			zOrient = new Vector3f(0, 0, 1);
 			xOrient = new Vector3f(1, 0, 0);
@@ -71,7 +72,7 @@ public class ComplexShape {
 			Matrix4f zTransform = new Matrix4f();
 			zTransform.setIdentity();
 			AxisAngle4f zTurn = new AxisAngle4f();
-			float zAngle = zOrient.dot(Z);
+			float zAngle = (float) Math.acos(zOrient.dot(Z));
 			Vector3f axis = new Vector3f();
 			axis.cross(zOrient, Z);
 			zTurn.set(axis, zAngle);
@@ -83,7 +84,7 @@ public class ComplexShape {
 			Matrix4f xTransform = new Matrix4f();
 			xTransform.setIdentity();
 			AxisAngle4f xTurn = new AxisAngle4f();
-			float xAngle = xOrient.dot(X);
+			float xAngle = (float) Math.acos(xOrient.dot(X));
 			Vector3f axis = new Vector3f();
 			axis.cross(xOrient, X);
 			xTurn.set(axis, xAngle);
@@ -105,6 +106,14 @@ public class ComplexShape {
 		public Adder at(float i, float j, float k) {
 			return at(new Vector3f(i,j,k));
 		}
+
+		public Adder zOrientation(float i, float j, float k) {
+			return zOrientation(new Vector3f(i,j,k));
+		}
+
+		public Adder xOrientation(float i, float j, float k) {
+			return xOrientation(new Vector3f(i,j,k));
+		}
 	}
 
 	public Matrix4f getTransformation() {
@@ -114,12 +123,18 @@ public class ComplexShape {
 	public void setTransformation(Matrix4f t) {
 		transformation.invert();
 		Matrix4f inverted = transformation;
-		for (Shape s : subshapes) {
+		for (IShape s : subshapes) {
 			Matrix4f sTrans = new Matrix4f();
 			sTrans.mul(inverted, s.getTransformation());
 			sTrans.mul(t, sTrans);
 			s.setTransformation(sTrans);
 		}
 		transformation = t;
+	}
+
+	@Override
+	public void update() {
+		for (IShape s : subshapes) 
+			s.update();
 	}
 }

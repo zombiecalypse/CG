@@ -40,4 +40,8 @@ public class Camera {
 	{
 		return cameraMatrix;
 	}
+	
+	public void setCameraMatrix(Matrix4f m) {
+		cameraMatrix = m;
+	}
 }
