@@ -20,8 +20,13 @@ public class Shape {
 		t.setIdentity();
 	}
 	
-	public VertexData getVertexData()
-	{
+	public Shape() {
+		t = new Matrix4f();
+		t.setIdentity();
+	}
+	
+	public VertexData getVertexData() {
+		assert vertexData != null : "Not fully initialized";
 		return vertexData;
 	}
 	
@@ -50,6 +55,6 @@ public class Shape {
 		return null;
 	}
 
-	private VertexData vertexData;
+	protected VertexData vertexData;
 	private Matrix4f t;
 }
