@@ -12,6 +12,7 @@ import javax.vecmath.Vector3f;
 
 import aaron.shapes.Car;
 import aaron.shapes.ComplexShape;
+import aaron.shapes.SimpleLandscape;
 
 import jrtr.GLRenderPanel;
 import jrtr.RenderContext;
@@ -25,7 +26,7 @@ public class Main {
 	static RenderPanel renderPanel;
 	static RenderContext renderContext;
 	static SimpleSceneManager sceneManager;
-	static ComplexShape shape;
+	static SimpleLandscape shape;
 	static float angle;
 	private static Matrix4f positionOfCar;
 
@@ -101,16 +102,16 @@ public class Main {
 		rotX.rotX(-1.0f);
 		rotY.rotY(0.1f);
 		appealing.mul(rotX,rotY);
-		appealing.setTranslation(new Vector3f(0,0,-30));
+		appealing.setTranslation(new Vector3f(0,0,-5));
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager();
-		sceneManager.getCamera().setCameraMatrix(appealing);
-		shape = new Car();
+		Matrix4f m = sceneManager.getCamera().getCameraMatrix();
+		shape = new SimpleLandscape();
 		positionOfCar = new Matrix4f();
 		positionOfCar.setIdentity();
 		AxisAngle4f rot = new AxisAngle4f(0,0,1,1.5707963f);
 		positionOfCar.set(rot);
-		positionOfCar.setTranslation( new Vector3f(10,0,0));
+		positionOfCar.setTranslation( new Vector3f(1,0,0));
 		sceneManager.addShape(shape, positionOfCar);
 
 		// Make a render panel. The init function of the renderPanel
