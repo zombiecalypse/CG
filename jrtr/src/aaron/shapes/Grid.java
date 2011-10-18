@@ -134,6 +134,11 @@ public class Grid {
 			Grid.this.points[x][y].color = v;
 			return this;
 		}
+
+		public Setter to(float f, float g, float h) {
+			return to(new Vector3f(f,g,h));
+			
+		}
 	}
 	
 	class Point {

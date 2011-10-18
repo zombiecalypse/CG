@@ -2,7 +2,7 @@ package aaron.shapes;
 
 import javax.vecmath.Matrix4f;
 
-import aaron.Color;
+import aaron.colorizations.Color;
 
 public class Car extends ComplexShape {
 	private ComplexShape frontAxis;

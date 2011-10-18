@@ -4,7 +4,7 @@ import java.util.Random;
 
 import javax.vecmath.Vector3f;
 
-import aaron.Color;
+import aaron.colorizations.Color;
 
 import jrtr.Shape;
 import jrtr.VertexData;

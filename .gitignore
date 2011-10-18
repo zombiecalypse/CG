@@ -2,6 +2,7 @@
 !.gitignore
 *~
 *.class
+**/bin/**
 
 # KDE
 .directory

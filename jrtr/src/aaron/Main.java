@@ -1,4 +1,4 @@
-package aaron.shapes;
+package aaron;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -9,6 +9,9 @@ import javax.swing.JFrame;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
+
+import aaron.shapes.Car;
+import aaron.shapes.ComplexShape;
 
 import jrtr.GLRenderPanel;
 import jrtr.RenderContext;
