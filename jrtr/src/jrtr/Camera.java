@@ -19,6 +19,36 @@ public class Camera {
 	private Vector3f up;
 	private boolean cacheValid;
 	
+	public Vector3f getCenterOfProjection() {
+		return centerOfProjection;
+	}
+
+	public void setCenterOfProjection(Vector3f centerOfProjection) {
+		this.centerOfProjection = centerOfProjection;
+	}
+
+	public Vector3f getLookAt() {
+		return lookAt;
+	}
+
+	public void setLookAt(Vector3f lookAt) {
+		this.lookAt = lookAt;
+	}
+
+	public Vector3f getUp() {
+		return up;
+	}
+
+	public void setUp(Vector3f up) {
+		this.up = up;
+	}
+	
+	public void transform(Matrix4f mat) {
+		mat.transform(this.centerOfProjection);
+		mat.transform(lookAt);
+		mat.transform(up);
+	}
+	
 	/**
 	 * Construct a camera with a default camera matrix. The camera
 	 * matrix corresponds to the world-to-camera transform. This default
@@ -26,7 +56,8 @@ public class Camera {
 	 * the origin (0,0,0) of world space, i.e., towards the negative z-axis.
 	 */
 	public Camera()	{
-		this(new Vector3f(5,5,5), new Vector3f(0,0,0), Z);
+		this(new Vector3f(0,5,0), N, Z);
+//		this(new Vector3f(5,5,5), new Vector3f(0,0,0), Z);
 	}
 	
 	public Camera(Vector3f centerOfProjection, Vector3f lookAt, Vector3f up) {
@@ -51,20 +82,23 @@ public class Camera {
 	}
 
 	private void updateCache() {
-		Vector3f g = new Vector3f(lookAt);
-		g.sub(new Vector3f(centerOfProjection));
-		g.normalize();
-		Vector3f w = new Vector3f(up);
+		Vector3f w = new Vector3f(centerOfProjection);
+		w.sub(new Vector3f(lookAt));
 		w.normalize();
+		Vector3f u = new Vector3f();
+		u.cross(w, up);
+		u.normalize();
 		Vector3f v = new Vector3f();
-		v.cross(g,w);
+		v.cross(w,u);
 		v.normalize();
 		Matrix4f ortho = new Matrix4f();
+		Matrix4f translate = new Matrix4f();
 		ortho.setIdentity();
-		ortho.setRow(0,new Vector4f(g));
-		ortho.setRow(1,new Vector4f(w));
-		ortho.setRow(2,new Vector4f(v));
-		ortho.setRow(3,new Vector4f(centerOfProjection));
+		ortho.setColumn(0,new Vector4f(u));
+		ortho.setColumn(1,new Vector4f(v));
+		ortho.setColumn(2,new Vector4f(w));
+		ortho.setColumn(3, new Vector4f(centerOfProjection));
+		ortho.m33 = 1;
 		ortho.invert();
 		cameraMatrix = ortho;
 	}

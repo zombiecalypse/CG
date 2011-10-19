@@ -119,9 +119,10 @@ public class Main {
 		rotY.rotY(0.1f);
 		appealing.mul(rotX,rotY);
 		appealing.setTranslation(new Vector3f(0,0,-5));
+		
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager();
-		Matrix4f m = sceneManager.getCamera().getCameraMatrix();
+		sceneManager.getCamera().transform(appealing);
 		shape = new SimpleLandscape();
 		positionOfCar = new Matrix4f();
 		positionOfCar.setIdentity();
