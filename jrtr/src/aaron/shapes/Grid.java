@@ -20,6 +20,7 @@ import jrtr.VertexData;
  */
 public class Grid {
 	private Point[][] points;
+	private Vector3f[][] normals;
 	private Map<Point,List<Point>> connections;
 	private int cols;
 	private int rows;
@@ -30,7 +31,13 @@ public class Grid {
 		this.rows = rows;
 		this.cols = cols;
 		this.points = new Point[cols][rows];
+		this.normals = new Vector3f[cols][rows];
 		this.connections = new HashMap<Point, List<Point>>();
+		for (int row = 0; row < rows ; row++)
+			for (int col = 0; col < cols ; col++) {
+				points[col][row] = new Point();
+				normals[col][row] = new Vector3f();
+			}
 	}
 
 	public Grid glueX() {
@@ -72,7 +79,31 @@ public class Grid {
 		data.addElement(positionsArray, VertexData.Semantic.POSITION, 3);
 		data.addElement(colorArray, VertexData.Semantic.COLOR, 3);
 		data.addIndices(connectionArray(positionInArray));
+		float normalArray[] = getNormalArray(positionInArray);
 		return data;
+	}
+
+	private float[] getNormalArray(Map<Point, Integer> positionInArray) {
+		ArrayList<Float> normalArray = new ArrayList<Float>();
+		
+		for (Point here : this.connections.keySet()) {
+			Point last = null;
+			for (Point intermediate : this.connections.get(here)) {
+				if (isConnected(last, intermediate)) {
+					// TODO
+//					connectionsArray.add(positionInArray.get(here));
+//					connectionsArray.add(positionInArray.get(last));
+//					connectionsArray.add(positionInArray.get(intermediate));
+				}
+				last = intermediate;
+			}
+		}
+		
+		float bare[] = new float[normalArray.size()];
+		for(int i = 0; i < normalArray.size(); i++) {  // Autoboxing is SO not auto enough
+			bare[i] = normalArray.get(i);
+		}
+		return bare;
 	}
 
 	private int[] connectionArray(Map<Point, Integer> positionInArray) {
@@ -144,6 +175,11 @@ public class Grid {
 	class Point {
 		public Vector3f position;
 		public Vector3f color;
+		
+		public Point() {
+			position = new Vector3f();
+			color = new Vector3f();
+		}
 	}
 	
 	class Connector {
@@ -168,11 +204,15 @@ public class Grid {
 		public void unsafeTo(int x, int y) {
 			if (!(x < Grid.this.points.length && x >= 0)) return;
 			if (!(y < Grid.this.points[0].length && y >= 0)) return;
+			
 			Point there = Grid.this.points[x][y];
+			
 			if (!Grid.this.connections.containsKey(this.here))
 				Grid.this.connections.put(this.here, new ArrayList<Point>());
+			
 			if (!Grid.this.connections.containsKey(there))
 				Grid.this.connections.put(there, new ArrayList<Point>());
+			
 			Grid.this.connections.get(this.here).add(there);
 			Grid.this.connections.get(there).add(this.here);
 		}

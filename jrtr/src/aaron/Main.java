@@ -12,8 +12,10 @@ import javax.vecmath.Vector3f;
 
 import aaron.shapes.Car;
 import aaron.shapes.ComplexShape;
+import aaron.shapes.IShape;
 import aaron.shapes.SimpleLandscape;
 
+import jrtr.Camera;
 import jrtr.GLRenderPanel;
 import jrtr.RenderContext;
 import jrtr.RenderPanel;
@@ -26,9 +28,10 @@ public class Main {
 	static RenderPanel renderPanel;
 	static RenderContext renderContext;
 	static SimpleSceneManager sceneManager;
-	static SimpleLandscape shape;
+	static IShape shape;
 	static float angle;
 	private static Matrix4f positionOfCar;
+	private static Camera camera;
 
 	/**
 	 * An extension of {@link GLRenderPanel} or {@link SWRenderPanel} to 
@@ -68,7 +71,7 @@ public class Main {
     		rotZ.rotZ(angle+0.005f);
     		t.mul(rotZ);
     		shape.update();
-    		sceneManager.transformShape(shape, t);
+    		camera.transform(t);
     		
     		// Trigger redrawing of the render window
     		renderPanel.getCanvas().repaint(); 
@@ -113,22 +116,19 @@ public class Main {
 
 	private static void showCar() {
 		Matrix4f appealing = new Matrix4f();
-		Matrix4f rotX = new Matrix4f();
-		Matrix4f rotY = new Matrix4f();
-		rotX.rotX(-1.0f);
-		rotY.rotY(0.1f);
-		appealing.mul(rotX,rotY);
-		appealing.setTranslation(new Vector3f(0,0,-5));
+		appealing.setIdentity();
+		
 		
 		// Make a scene manager and add the object
 		sceneManager = new SimpleSceneManager();
-		sceneManager.getCamera().transform(appealing);
+		camera = sceneManager.getCamera();
+		camera.setCenterOfProjection(new Vector3f(3,0,3));
+		camera.setUp(new Vector3f(-5,0,5));
+		camera.transform(appealing);
+		camera.pointAt(new Vector3f(0,0,0));
 		shape = new SimpleLandscape();
 		positionOfCar = new Matrix4f();
 		positionOfCar.setIdentity();
-		AxisAngle4f rot = new AxisAngle4f(0,0,1,1.5707963f);
-		positionOfCar.set(rot);
-		positionOfCar.setTranslation( new Vector3f(1,0,0));
 		sceneManager.addShape(shape, positionOfCar);
 
 		// Make a render panel. The init function of the renderPanel

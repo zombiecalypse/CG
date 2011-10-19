@@ -23,6 +23,7 @@ public class LimitColorization extends Colorization {
 		this.low = low;
 		this.high = high;
 		this.limit = limit;
+		this.limit.normalize();
 		this.random = new Random();
 		this.flimit = f;
 	}

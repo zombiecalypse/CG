@@ -29,15 +29,29 @@ public class SimpleLandscape extends Shape {
 		int dim = (int) (pow(2,n)+1); 
 		float heightMap[][] = new float[dim][dim];
 		randomHeightMap(heightMap,0,0,dim-1,dim-1);
-		Grid grid = new Grid(dim,dim);
+		Grid grid = new Grid(dim+2,dim+2);
 		float planeStep = 1.0f/((float)dim);
+		float min = Float.MAX_VALUE;
 		for (int row = 0; row < dim ; row++)
 			for (int col = 0; col < dim; col++) {
-				Vector3f v = new Vector3f(planeStep*row, planeStep* col, heightMap[row][col]);
-				grid.set(row, col)
+				Vector3f v = new Vector3f(planeStep*row-0.5f, planeStep* col-0.5f, heightMap[row][col]);
+				if (min > heightMap[row][col]) min = heightMap[row][col];
+				grid.set(row+1, col+1)
 						.to(v)
-						.in(color.color(row, col, v));
+						.in(color.color(row+1, col+1, v));
 			}
+		min -= 0.2;
+		for (int i = 0 ; i <= dim+1 ; i++) {
+			Vector3f left = new Vector3f(planeStep*i-0.5f, -0.5f,min);
+			Vector3f right = new Vector3f(planeStep*i-0.5f, 0.5f,min);
+			grid.set(i, 0).to(left).in(color.color(i, 0, left));
+			grid.set(i, dim+1).to(right).in(color.color(i, dim+1, right));
+			
+			Vector3f bottom = new Vector3f(-0.5f,planeStep*i-0.5f, min);
+			Vector3f high = new Vector3f( 0.5f,planeStep*i-0.5f,min);
+			grid.set(0, i).to(bottom).in(color.color(0, i, bottom));
+			grid.set(dim+1, i).to(high).in(color.color(dim+1, i, high));
+		}
 		grid.connectNeighbors();
 		return grid.vertexData();
 	}

@@ -19,14 +19,18 @@ public class Frustum {
 	 * Construct a default viewing frustum. The frustum is given by a 
 	 * default 4x4 projection matrix.
 	 */
-	public Frustum()
-	{
+	public Frustum() {
+		this(0.75f, 1.0471976f, 1,2);
+	}
+	public Frustum(float aspect, float theta, float n, float f) {
+		float t = (float) (Math.tan(theta/2)*n);
+		float r = t*aspect;
 		projectionMatrix = new Matrix4f();
-		float f[] = {2.f, 0.f, 0.f, 0.f, 
-					 0.f, 2.f, 0.f, 0.f,
-				     0.f, 0.f, -1.02f, -2.02f,
-				     0.f, 0.f, -1.f, 0.f};
-		projectionMatrix.set(f);
+		float a[] = {n/r, 0.f, 0.f, 0.f, 
+					 0.f, n/t, 0.f, 0.f,
+				     0.f, 0.f, (f+n)/(n-f), 2*f*n/(f-n),
+				     0.f, 0.f, 1.f, 0.f};
+		projectionMatrix.set(a);
 	}
 	
 	/**

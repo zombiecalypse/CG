@@ -49,6 +49,23 @@ public class Camera {
 		mat.transform(up);
 	}
 	
+	public Vector3f lookAtDir() {
+		Vector3f dir = new Vector3f(lookAt);
+		dir.sub(centerOfProjection);
+		return dir;
+	}
+	
+	public void pointAt(Vector3f v) {
+		Vector3f axis = new Vector3f();
+		Vector3f g = new Vector3f(v);
+		g.sub(this.centerOfProjection);
+		axis.cross(lookAtDir(), g);
+		AxisAngle4f rot = new AxisAngle4f(axis,g.dot(lookAtDir()));
+		Matrix4f rotMat = new Matrix4f();
+		rotMat.set(rot);
+		transform(rotMat);
+	}
+	
 	/**
 	 * Construct a camera with a default camera matrix. The camera
 	 * matrix corresponds to the world-to-camera transform. This default
@@ -89,10 +106,9 @@ public class Camera {
 		u.cross(w, up);
 		u.normalize();
 		Vector3f v = new Vector3f();
-		v.cross(w,u);
+		v.cross(u,w);
 		v.normalize();
 		Matrix4f ortho = new Matrix4f();
-		Matrix4f translate = new Matrix4f();
 		ortho.setIdentity();
 		ortho.setColumn(0,new Vector4f(u));
 		ortho.setColumn(1,new Vector4f(v));
