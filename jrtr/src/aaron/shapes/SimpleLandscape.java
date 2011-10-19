@@ -51,7 +51,8 @@ public class SimpleLandscape extends Shape {
 		randomHeightMapRecur(heightMap, rand, 1, minX, minY, maxX, maxY);
 	}
 
-	private static void randomHeightMapRecur(float[][] heightMap, Random rand, float maxFlux,
+	private static void randomHeightMapRecur(float[][] heightMap, Random rand, 
+			float maxFlux,
 			int minX, int minY, 
 			int maxX, int maxY) {
 		int centralX = (minX+maxX)/2;
