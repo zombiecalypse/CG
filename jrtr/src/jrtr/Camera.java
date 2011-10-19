@@ -51,52 +51,21 @@ public class Camera {
 	}
 
 	private void updateCache() {
-		Matrix4f translation = getTranslation();
-		Matrix4f lookAtMat = lookAtMatrix();
-		Matrix4f upMat = upMatrix();
-		this.cameraMatrix.setIdentity();
-		this.cameraMatrix.mul(this.cameraMatrix, lookAtMat);
-		this.cameraMatrix.mul(this.cameraMatrix, upMat);
-		this.cameraMatrix.mul(translation);
-		this.cameraMatrix.m33 = 0;
-		this.cameraMatrix.m32 = 1;
-	}
-
-	private Matrix4f getTranslation() {
-		Matrix4f translation = new Matrix4f();
-		translation.setIdentity();
-		translation.setTranslation(centerOfProjection);
-		return translation;
-	}
-	
-	private Matrix4f upMatrix() {
-		Vector3f upDir = new Vector3f();
-		upDir.set(this.up);
-		upDir.sub(this.centerOfProjection);
-		upDir.normalize();
-		AxisAngle4f up = new AxisAngle4f();
-		Vector3f upAxis = new Vector3f();
-		upAxis.cross(upDir, Z);
-		float zAngle = (float) Math.acos(upDir.dot(Z));
-		up.set(upAxis, zAngle);
-		Matrix4f upMat = new Matrix4f();
-		upMat.setIdentity();
-		upMat.set(up);
-		return upMat;
-	}
-	private Matrix4f lookAtMatrix() {
-		Vector3f lookDir = new Vector3f();
-		lookDir.set(this.lookAt);
-		lookDir.sub(this.centerOfProjection);
-		lookDir.normalize();
-		AxisAngle4f look = new AxisAngle4f();
-		Vector3f lookAxis = new Vector3f();
-		lookAxis.cross(lookDir, X);
-		float xAngle = (float) Math.acos(lookDir.dot(X));
-		look.set(lookAxis, xAngle);
-		Matrix4f lookMat = new Matrix4f();
-		lookMat.setIdentity();
-		lookMat.set(look);
-		return lookMat;
+		Vector3f g = new Vector3f(lookAt);
+		g.sub(new Vector3f(centerOfProjection));
+		g.normalize();
+		Vector3f w = new Vector3f(up);
+		w.normalize();
+		Vector3f v = new Vector3f();
+		v.cross(g,w);
+		v.normalize();
+		Matrix4f ortho = new Matrix4f();
+		ortho.setIdentity();
+		ortho.setRow(0,new Vector4f(g));
+		ortho.setRow(1,new Vector4f(w));
+		ortho.setRow(2,new Vector4f(v));
+		ortho.setRow(3,new Vector4f(centerOfProjection));
+		ortho.invert();
+		cameraMatrix = ortho;
 	}
 }
