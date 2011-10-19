@@ -13,9 +13,10 @@ import static aaron.Helpers.*;
 import static java.lang.Math.*;
 
 public class SimpleLandscape extends Shape {
-	private static final Colorization color = new LimitColorization(Color.GREEN, Color.WHITE, Z);
+	private static final Colorization color = new LimitColorization(Color.GREEN, Color.WHITE, Z, 0.5f);
+	private static final float fluxMod = 0.25f;
 	public SimpleLandscape() {
-		super(makeLandscape(10, color));
+		super(makeLandscape(8, color));
 	}
 
 	/**
@@ -37,6 +38,7 @@ public class SimpleLandscape extends Shape {
 						.to(v)
 						.in(color.color(row, col, v));
 			}
+		grid.connectNeighbors();
 		return grid.vertexData();
 	}
 
@@ -48,25 +50,26 @@ public class SimpleLandscape extends Shape {
 		heightMap[maxX][minY] = rand.nextFloat();
 		heightMap[minX][maxY] = rand.nextFloat();
 		heightMap[maxX][maxY] = rand.nextFloat();
-		randomHeightMapRecur(heightMap, rand, 1, minX, minY, maxX, maxY);
+		randomHeightMapRecur(heightMap, rand, fluxMod, minX, minY, maxX, maxY);
 	}
 
 	private static void randomHeightMapRecur(float[][] heightMap, Random rand, 
 			float maxFlux,
 			int minX, int minY, 
 			int maxX, int maxY) {
+		if (maxX - minX < 2 && maxY - minY < 2) return;
 		int centralX = (minX+maxX)/2;
 		int centralY = (minY+maxY)/2;
-		heightMap[centralX][centralY] =rand.nextFloat()*maxFlux+ (heightMap[minX][minY]+heightMap[maxX][maxY] + heightMap[minX][maxY] + heightMap[maxX][minY])/4;
+		heightMap[centralX][centralY] =(float) (rand.nextGaussian()*maxFlux+ (heightMap[minX][minY]+heightMap[maxX][maxY] + heightMap[minX][maxY] + heightMap[maxX][minY])/4);
 		
-		heightMap[centralX][minY] = rand.nextFloat()*maxFlux+ (heightMap[minX][minY]+ heightMap[maxX][minY])/2;
-		heightMap[centralX][maxY] = rand.nextFloat()*maxFlux+ (heightMap[minX][maxY]+ heightMap[maxX][maxY])/2;
-		heightMap[minX][centralY] = rand.nextFloat()*maxFlux+ (heightMap[minX][minY]+ heightMap[minX][maxX])/2;
-		heightMap[maxX][centralY] = rand.nextFloat()*maxFlux+ (heightMap[maxX][minY]+ heightMap[maxX][maxX])/2;
+		heightMap[centralX][minY] = (float) (rand.nextGaussian()*maxFlux+ (heightMap[minX][minY]+ heightMap[maxX][minY])/2);
+		heightMap[centralX][maxY] = (float) (rand.nextGaussian()*maxFlux+ (heightMap[minX][maxY]+ heightMap[maxX][maxY])/2);
+		heightMap[minX][centralY] = (float) (rand.nextGaussian()*maxFlux+ (heightMap[minX][minY]+ heightMap[minX][maxY])/2);
+		heightMap[maxX][centralY] = (float) (rand.nextGaussian()*maxFlux+ (heightMap[maxX][minY]+ heightMap[maxX][maxY])/2);
 		
-		randomHeightMapRecur(heightMap, rand, maxFlux*0.5f, minX, minY, centralX, centralY);
-		randomHeightMapRecur(heightMap, rand, maxFlux*0.5f, minX, centralY, centralX, maxY);
-		randomHeightMapRecur(heightMap, rand, maxFlux*0.5f, centralX, minY, maxX, centralY);
-		randomHeightMapRecur(heightMap, rand, maxFlux*0.5f, centralX, centralY, maxX, maxY);
+		randomHeightMapRecur(heightMap, rand, maxFlux*fluxMod, minX, minY, centralX, centralY);
+		randomHeightMapRecur(heightMap, rand, maxFlux*fluxMod, minX, centralY, centralX, maxY);
+		randomHeightMapRecur(heightMap, rand, maxFlux*fluxMod, centralX, minY, maxX, centralY);
+		randomHeightMapRecur(heightMap, rand, maxFlux*fluxMod, centralX, centralY, maxX, maxY);
 	}
 }

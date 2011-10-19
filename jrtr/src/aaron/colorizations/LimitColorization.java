@@ -17,12 +17,14 @@ public class LimitColorization extends Colorization {
 	private Colorization high;
 	private Vector3f limit;
 	private Random random;
+	private float flimit;
 
-	public LimitColorization(Colorization low, Colorization high, Vector3f limit) {
+	public LimitColorization(Colorization low, Colorization high, Vector3f limit, float f) {
 		this.low = low;
 		this.high = high;
 		this.limit = limit;
 		this.random = new Random();
+		this.flimit = f;
 	}
 	
 	public float flux() {
@@ -31,7 +33,7 @@ public class LimitColorization extends Colorization {
 
 	@Override
 	public Vector3f color(int x, int y, Vector3f position) {
-		if (limit.dot(position)*flux() > 1) {
+		if (limit.dot(position)*flux() > flimit) {
 			return this.high.color(x, y, position);
 		}
 		else {
