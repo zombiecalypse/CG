@@ -60,50 +60,64 @@ public class Grid {
 		VertexData data = new VertexData(cols*rows);
 		float positionsArray[] = new float[cols*rows*3];
 		float colorArray[] = new float[cols*rows*3];
+		float normalArray[] = new float[cols*rows*3];
 		Map<Point, Integer> positionInArray = new HashMap<Point, Integer>();
+		Map<Point, Vector3f> normalMap = getNormalMap();
 		int flowIndex = 0;
 		int index = 0;
 		for (Point[] row : points) 
 			for (Point point : row) {
+				Vector3f nvector = normalMap.get(point);
+				if (nvector == null)
+					nvector = new Vector3f();
 				positionInArray.put(point, index++);
 				positionsArray[flowIndex] = point.position.x;
 				colorArray[flowIndex] = point.color.x;
+				normalArray[flowIndex] = nvector.x;
 				flowIndex++;
 				positionsArray[flowIndex] = point.position.y;
 				colorArray[flowIndex] = point.color.y;
+				normalArray[flowIndex] = nvector.y;
 				flowIndex++;
 				positionsArray[flowIndex] = point.position.z;
 				colorArray[flowIndex] = point.color.z;
+				normalArray[flowIndex] = nvector.z;
 				flowIndex++;
 			}
 		data.addElement(positionsArray, VertexData.Semantic.POSITION, 3);
 		data.addElement(colorArray, VertexData.Semantic.COLOR, 3);
+		data.addElement(normalArray, VertexData.Semantic.NORMAL, 3);
 		data.addIndices(connectionArray(positionInArray));
-		float normalArray[] = getNormalArray(positionInArray);
 		return data;
 	}
 
-	private float[] getNormalArray(Map<Point, Integer> positionInArray) {
-		ArrayList<Float> normalArray = new ArrayList<Float>();
-		
-		for (Point here : this.connections.keySet()) {
-			Point last = null;
-			for (Point intermediate : this.connections.get(here)) {
-				if (isConnected(last, intermediate)) {
-					// TODO
-//					connectionsArray.add(positionInArray.get(here));
-//					connectionsArray.add(positionInArray.get(last));
-//					connectionsArray.add(positionInArray.get(intermediate));
-				}
-				last = intermediate;
+	private Map<Point, Vector3f> getNormalMap() {
+		Map<Point, Vector3f> normalMap = new HashMap<Point, Vector3f>();
+		for (int row = 1; row+1 < rows; row++) 
+			for (int col = 1; col+1 < cols; col++) {
+				Vector3f gauss = new Vector3f();
+				Vector3f dx = new Vector3f();
+				dx.scaleAdd(3,     points[col+1][row]  .position); // Sobel
+				dx.scaleAdd(-3,    points[col-1][row]  .position);
+				dx.scaleAdd(1,     points[col+1][row-1].position);
+				dx.scaleAdd(-1,    points[col-1][row-1].position);
+				dx.scaleAdd(1,     points[col+1][row+1].position);
+				dx.scaleAdd(-1,    points[col-1][row+1].position);
+				
+				Vector3f dy = new Vector3f();
+				dy.scaleAdd(3,     points[col]  [row+1] .position);
+				dy.scaleAdd(-3,    points[col]  [row-1] .position);
+				dy.scaleAdd(1,     points[col-1][row+1] .position);
+				dy.scaleAdd(-1,    points[col-1][row-1] .position);
+				dy.scaleAdd(1,     points[col+1][row+1] .position);
+				dy.scaleAdd(-1,    points[col+1][row-1] .position);
+				
+				gauss.cross(dx, dy);
+				gauss.normalize();
+				normalMap.put(points[col][row], gauss);
 			}
-		}
 		
-		float bare[] = new float[normalArray.size()];
-		for(int i = 0; i < normalArray.size(); i++) {  // Autoboxing is SO not auto enough
-			bare[i] = normalArray.get(i);
-		}
-		return bare;
+		return normalMap;
 	}
 
 	private int[] connectionArray(Map<Point, Integer> positionInArray) {

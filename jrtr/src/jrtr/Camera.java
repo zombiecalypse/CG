@@ -14,17 +14,18 @@ import static aaron.Helpers.*;
 public class Camera {
 
 	private Matrix4f cameraMatrix;
-	private Vector3f centerOfProjection;
+	private Point3f centerOfProjection;
 	private Vector3f lookAt;
 	private Vector3f up;
 	private boolean cacheValid;
 	
-	public Vector3f getCenterOfProjection() {
+	public Point3f getCenterOfProjection() {
 		return centerOfProjection;
 	}
 
-	public void setCenterOfProjection(Vector3f centerOfProjection) {
+	public void setCenterOfProjection(Point3f centerOfProjection) {
 		this.centerOfProjection = centerOfProjection;
+		cacheValid = false;
 	}
 
 	public Vector3f getLookAt() {
@@ -33,6 +34,7 @@ public class Camera {
 
 	public void setLookAt(Vector3f lookAt) {
 		this.lookAt = lookAt;
+		cacheValid = false;
 	}
 
 	public Vector3f getUp() {
@@ -41,17 +43,20 @@ public class Camera {
 
 	public void setUp(Vector3f up) {
 		this.up = up;
+		cacheValid = false;
 	}
 	
 	public void transform(Matrix4f mat) {
 		mat.transform(this.centerOfProjection);
 		mat.transform(lookAt);
 		mat.transform(up);
+		cacheValid = false;
 	}
 	
 	public Vector3f lookAtDir() {
 		Vector3f dir = new Vector3f(lookAt);
 		dir.sub(centerOfProjection);
+		cacheValid = false;
 		return dir;
 	}
 	
@@ -73,11 +78,11 @@ public class Camera {
 	 * the origin (0,0,0) of world space, i.e., towards the negative z-axis.
 	 */
 	public Camera()	{
-		this(new Vector3f(0,5,0), N, Z);
+		this(new Point3f(0,5,0), Y, Z);
 //		this(new Vector3f(5,5,5), new Vector3f(0,0,0), Z);
 	}
 	
-	public Camera(Vector3f centerOfProjection, Vector3f lookAt, Vector3f up) {
+	public Camera(Point3f centerOfProjection, Vector3f lookAt, Vector3f up) {
 		this.centerOfProjection = centerOfProjection;
 		this.lookAt = lookAt;
 		this.up = up;
@@ -99,8 +104,7 @@ public class Camera {
 	}
 
 	private void updateCache() {
-		Vector3f w = new Vector3f(centerOfProjection);
-		w.sub(new Vector3f(lookAt));
+		Vector3f w = new Vector3f(lookAt);
 		w.normalize();
 		Vector3f u = new Vector3f();
 		u.cross(w, up);

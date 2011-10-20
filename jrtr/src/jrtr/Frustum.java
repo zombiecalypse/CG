@@ -20,7 +20,7 @@ public class Frustum {
 	 * default 4x4 projection matrix.
 	 */
 	public Frustum() {
-		this(0.75f, 1.0471976f, 1,2);
+		this(1f, 1.0471976f, 0.001f,100f);
 	}
 	public Frustum(float aspect, float theta, float n, float f) {
 		float t = (float) (Math.tan(theta/2)*n);
@@ -28,8 +28,8 @@ public class Frustum {
 		projectionMatrix = new Matrix4f();
 		float a[] = {n/r, 0.f, 0.f, 0.f, 
 					 0.f, n/t, 0.f, 0.f,
-				     0.f, 0.f, (f+n)/(n-f), 2*f*n/(f-n),
-				     0.f, 0.f, 1.f, 0.f};
+				     0.f, 0.f, -(f+n)/(f-n), 2*f*n/(n-f),
+				     0.f, 0.f, -1.f, 0.f};
 		projectionMatrix.set(a);
 	}
 	

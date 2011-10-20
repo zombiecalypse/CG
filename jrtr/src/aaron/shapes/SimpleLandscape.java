@@ -14,7 +14,7 @@ import static java.lang.Math.*;
 
 public class SimpleLandscape extends Shape {
 	private static final Colorization color = new LimitColorization(Color.GREEN, Color.WHITE, Z, 0.5f);
-	private static final float fluxMod = 0.25f;
+	private static final float fluxMod = 0.125f;
 	public SimpleLandscape() {
 		super(makeLandscape(8, color));
 	}
@@ -76,10 +76,14 @@ public class SimpleLandscape extends Shape {
 		int centralY = (minY+maxY)/2;
 		heightMap[centralX][centralY] =(float) (rand.nextGaussian()*maxFlux+ (heightMap[minX][minY]+heightMap[maxX][maxY] + heightMap[minX][maxY] + heightMap[maxX][minY])/4);
 		
-		heightMap[centralX][minY] = (float) (rand.nextGaussian()*maxFlux+ (heightMap[minX][minY]+ heightMap[maxX][minY])/2);
-		heightMap[centralX][maxY] = (float) (rand.nextGaussian()*maxFlux+ (heightMap[minX][maxY]+ heightMap[maxX][maxY])/2);
-		heightMap[minX][centralY] = (float) (rand.nextGaussian()*maxFlux+ (heightMap[minX][minY]+ heightMap[minX][maxY])/2);
-		heightMap[maxX][centralY] = (float) (rand.nextGaussian()*maxFlux+ (heightMap[maxX][minY]+ heightMap[maxX][maxY])/2);
+		if (heightMap[centralX][minY]==0)
+			heightMap[centralX][minY] = (float) (rand.nextGaussian()*maxFlux+ (heightMap[minX][minY]+ heightMap[maxX][minY])/2);
+		if (heightMap[centralX][maxY] == 0)
+			heightMap[centralX][maxY] = (float) (rand.nextGaussian()*maxFlux+ (heightMap[minX][maxY]+ heightMap[maxX][maxY])/2);
+		if (heightMap[minX][centralY] == 0)
+			heightMap[minX][centralY] = (float) (rand.nextGaussian()*maxFlux+ (heightMap[minX][minY]+ heightMap[minX][maxY])/2);
+		if (heightMap[maxX][centralY] == 0)
+			heightMap[maxX][centralY] = (float) (rand.nextGaussian()*maxFlux+ (heightMap[maxX][minY]+ heightMap[maxX][maxY])/2);
 		
 		randomHeightMapRecur(heightMap, rand, maxFlux*fluxMod, minX, minY, centralX, centralY);
 		randomHeightMapRecur(heightMap, rand, maxFlux*fluxMod, minX, centralY, centralX, maxY);

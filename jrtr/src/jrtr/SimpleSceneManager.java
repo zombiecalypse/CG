@@ -25,9 +25,17 @@ public class SimpleSceneManager implements SceneManagerInterface {
 	private Frustum frustum;
 
 	public SimpleSceneManager() {
+		this(new Camera(), new Frustum());
+	}
+	
+	public SimpleSceneManager(Camera c) {
+		this(c, new Frustum());
+	}
+	
+	public SimpleSceneManager(Camera c, Frustum f) {
+		camera = c;
+		frustum = f;
 		shapes = new HashMap<Shape, Matrix4f>();
-		camera = new Camera();
-		frustum = new Frustum();
 	}
 
 	public Camera getCamera() {
