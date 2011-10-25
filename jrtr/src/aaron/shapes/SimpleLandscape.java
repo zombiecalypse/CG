@@ -13,52 +13,56 @@ import static aaron.Helpers.*;
 import static java.lang.Math.*;
 
 public class SimpleLandscape extends Shape {
-	private static final Colorization color = new LimitColorization(Color.GREEN, Color.WHITE, Z, 0.5f);
+	private static final Colorization color = new LimitColorization(
+			Color.GREEN, Color.WHITE, Z, 0.5f);
 	private static final float fluxMod = 0.125f;
+
 	public SimpleLandscape() {
 		super(makeLandscape(8, color));
 	}
 
 	/**
-	 * Creates a random landscape mesh.  
-	 * @param n use 2^n +1 points
+	 * Creates a random landscape mesh.
+	 * 
+	 * @param n
+	 *            use 2^n +1 points
 	 * @return the vertexdata with colour and positions.
 	 */
 	private static VertexData makeLandscape(int n, Colorization color) {
 		assert n > 0;
-		int dim = (int) (pow(2,n)+1); 
+		int dim = (int) (pow(2, n) + 1);
 		float heightMap[][] = new float[dim][dim];
-		randomHeightMap(heightMap,0,0,dim-1,dim-1);
-		Grid grid = new Grid(dim+2,dim+2);
-		float planeStep = 1.0f/((float)dim);
+		randomHeightMap(heightMap, 0, 0, dim - 1, dim - 1);
+		Grid grid = new Grid(dim + 2, dim + 2);
+		float planeStep = 1.0f / ((float) dim);
 		float min = Float.MAX_VALUE;
-		for (int row = 0; row < dim ; row++)
+		for (int row = 0; row < dim; row++)
 			for (int col = 0; col < dim; col++) {
-				Vector3f v = new Vector3f(planeStep*row-0.5f, planeStep* col-0.5f, heightMap[row][col]);
-				if (min > heightMap[row][col]) min = heightMap[row][col];
-				grid.set(row+1, col+1)
-						.to(v)
-						.in(color.color(row+1, col+1, v));
+				Vector3f v = new Vector3f(planeStep * row - 0.5f, planeStep
+						* col - 0.5f, heightMap[row][col]);
+				if (min > heightMap[row][col])
+					min = heightMap[row][col];
+				grid.set(row + 1, col + 1).to(v)
+						.in(color.color(row + 1, col + 1, v));
 			}
 		min -= 0.2;
-		for (int i = 0 ; i <= dim+1 ; i++) {
-			Vector3f left = new Vector3f(planeStep*i-0.5f, -0.5f,min);
-			Vector3f right = new Vector3f(planeStep*i-0.5f, 0.5f,min);
+		for (int i = 0; i <= dim + 1; i++) {
+			Vector3f left = new Vector3f(planeStep * i - 0.5f, -0.5f, min);
+			Vector3f right = new Vector3f(planeStep * i - 0.5f, 0.5f, min);
 			grid.set(i, 0).to(left).in(color.color(i, 0, left));
-			grid.set(i, dim+1).to(right).in(color.color(i, dim+1, right));
-			
-			Vector3f bottom = new Vector3f(-0.5f,planeStep*i-0.5f, min);
-			Vector3f high = new Vector3f( 0.5f,planeStep*i-0.5f,min);
+			grid.set(i, dim + 1).to(right).in(color.color(i, dim + 1, right));
+
+			Vector3f bottom = new Vector3f(-0.5f, planeStep * i - 0.5f, min);
+			Vector3f high = new Vector3f(0.5f, planeStep * i - 0.5f, min);
 			grid.set(0, i).to(bottom).in(color.color(0, i, bottom));
-			grid.set(dim+1, i).to(high).in(color.color(dim+1, i, high));
+			grid.set(dim + 1, i).to(high).in(color.color(dim + 1, i, high));
 		}
 		grid.connectNeighbors();
 		return grid.vertexData();
 	}
 
-	private static void randomHeightMap(float[][] heightMap, 
-			int minX, int minY,
-			int maxX, int maxY) {
+	private static void randomHeightMap(float[][] heightMap, int minX,
+			int minY, int maxX, int maxY) {
 		Random rand = new Random();
 		heightMap[minX][minY] = rand.nextFloat();
 		heightMap[maxX][minY] = rand.nextFloat();
@@ -67,27 +71,31 @@ public class SimpleLandscape extends Shape {
 		randomHeightMapRecur(heightMap, rand, fluxMod, minX, minY, maxX, maxY);
 	}
 
-	private static void randomHeightMapRecur(float[][] heightMap, Random rand, 
-			float maxFlux,
-			int minX, int minY, 
-			int maxX, int maxY) {
-		if (maxX - minX < 2 && maxY - minY < 2) return;
-		int centralX = (minX+maxX)/2;
-		int centralY = (minY+maxY)/2;
-		heightMap[centralX][centralY] =(float) (rand.nextGaussian()*maxFlux+ (heightMap[minX][minY]+heightMap[maxX][maxY] + heightMap[minX][maxY] + heightMap[maxX][minY])/4);
-		
-		if (heightMap[centralX][minY]==0)
-			heightMap[centralX][minY] = (float) (rand.nextGaussian()*maxFlux+ (heightMap[minX][minY]+ heightMap[maxX][minY])/2);
+	private static void randomHeightMapRecur(float[][] heightMap, Random rand,
+			float maxFlux, int minX, int minY, int maxX, int maxY) {
+		if (maxX - minX < 2 && maxY - minY < 2)
+			return;
+		int centralX = (minX + maxX) / 2;
+		int centralY = (minY + maxY) / 2;
+		heightMap[centralX][centralY] = (float) (rand.nextGaussian() * maxFlux + (heightMap[minX][minY]
+				+ heightMap[maxX][maxY] + heightMap[minX][maxY] + heightMap[maxX][minY]) / 4);
+
+		if (heightMap[centralX][minY] == 0)
+			heightMap[centralX][minY] = (float) (rand.nextGaussian() * maxFlux + (heightMap[minX][minY] + heightMap[maxX][minY]) / 2);
 		if (heightMap[centralX][maxY] == 0)
-			heightMap[centralX][maxY] = (float) (rand.nextGaussian()*maxFlux+ (heightMap[minX][maxY]+ heightMap[maxX][maxY])/2);
+			heightMap[centralX][maxY] = (float) (rand.nextGaussian() * maxFlux + (heightMap[minX][maxY] + heightMap[maxX][maxY]) / 2);
 		if (heightMap[minX][centralY] == 0)
-			heightMap[minX][centralY] = (float) (rand.nextGaussian()*maxFlux+ (heightMap[minX][minY]+ heightMap[minX][maxY])/2);
+			heightMap[minX][centralY] = (float) (rand.nextGaussian() * maxFlux + (heightMap[minX][minY] + heightMap[minX][maxY]) / 2);
 		if (heightMap[maxX][centralY] == 0)
-			heightMap[maxX][centralY] = (float) (rand.nextGaussian()*maxFlux+ (heightMap[maxX][minY]+ heightMap[maxX][maxY])/2);
-		
-		randomHeightMapRecur(heightMap, rand, maxFlux*fluxMod, minX, minY, centralX, centralY);
-		randomHeightMapRecur(heightMap, rand, maxFlux*fluxMod, minX, centralY, centralX, maxY);
-		randomHeightMapRecur(heightMap, rand, maxFlux*fluxMod, centralX, minY, maxX, centralY);
-		randomHeightMapRecur(heightMap, rand, maxFlux*fluxMod, centralX, centralY, maxX, maxY);
+			heightMap[maxX][centralY] = (float) (rand.nextGaussian() * maxFlux + (heightMap[maxX][minY] + heightMap[maxX][maxY]) / 2);
+
+		randomHeightMapRecur(heightMap, rand, maxFlux * fluxMod, minX, minY,
+				centralX, centralY);
+		randomHeightMapRecur(heightMap, rand, maxFlux * fluxMod, minX,
+				centralY, centralX, maxY);
+		randomHeightMapRecur(heightMap, rand, maxFlux * fluxMod, centralX,
+				minY, maxX, centralY);
+		randomHeightMapRecur(heightMap, rand, maxFlux * fluxMod, centralX,
+				centralY, maxX, maxY);
 	}
 }

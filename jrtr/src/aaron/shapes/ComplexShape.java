@@ -9,7 +9,6 @@ import javax.vecmath.Vector3f;
 
 import aaron.shapes.ComplexShape.Adder;
 
-
 import jrtr.RenderItem;
 import jrtr.Shape;
 import jrtr.VertexData;
@@ -104,15 +103,15 @@ public class ComplexShape implements IShape {
 		}
 
 		public Adder at(float i, float j, float k) {
-			return at(new Vector3f(i,j,k));
+			return at(new Vector3f(i, j, k));
 		}
 
 		public Adder zOrientation(float i, float j, float k) {
-			return zOrientation(new Vector3f(i,j,k));
+			return zOrientation(new Vector3f(i, j, k));
 		}
 
 		public Adder xOrientation(float i, float j, float k) {
-			return xOrientation(new Vector3f(i,j,k));
+			return xOrientation(new Vector3f(i, j, k));
 		}
 	}
 
@@ -134,7 +133,7 @@ public class ComplexShape implements IShape {
 
 	@Override
 	public void update() {
-		for (IShape s : subshapes) 
+		for (IShape s : subshapes)
 			s.update();
 	}
 }
