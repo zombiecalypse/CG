@@ -38,19 +38,21 @@ public class Demo {
 	private Camera camera;
 	private SimpleSceneManager scenemanager;
 	private SimpleRenderPanel renderPanel;
+	private VirtualTrackball listener;
+	private WSListener ws;
 
 	public Demo() {
-		this.camera = new Camera();
 		this.scenemanager = new SimpleSceneManager();
+		this.camera = scenemanager.getCamera();
 		this.renderPanel = new SimpleRenderPanel(this);
 		this.shapes = new HashSet<IShape>();
+		this.listener = new VirtualTrackball(camera);
+		this.ws = new WSListener(camera);
 		
 		createScene();
 	}
 	
 	public void update() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	private void createScene() {
@@ -70,8 +72,7 @@ public class Demo {
 																// window
 
 		// Add a mouse listener
-		VirtualTrackball listener = new VirtualTrackball(camera);
-		WSListener ws = new WSListener(camera);
+
 		renderPanel.getCanvas().addMouseMotionListener(listener);
 		jframe.addMouseListener(listener);
 		jframe.addKeyListener(ws);
