@@ -13,11 +13,8 @@ import aaron.WSListener;
 import aaron.shapes.Car;
 import aaron.shapes.ComplexShape;
 import aaron.shapes.IShape;
-import aaron.shapes.SimpleLandscape;
 import jrtr.Camera;
-import jrtr.RenderContext;
 import jrtr.SceneManagerInterface;
-import jrtr.Shape;
 import jrtr.SimpleSceneManager;
 
 public class Demo {
@@ -32,6 +29,7 @@ public class Demo {
 			for (IShape shape : shapes) {
 				shape.update();
 			}
+			Demo.this.update();
 			// Trigger redrawing of the render window
 			renderPanel.getCanvas().repaint();
 		}
@@ -50,6 +48,11 @@ public class Demo {
 		createScene();
 	}
 	
+	public void update() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	private void createScene() {
 		ComplexShape shape = new Car();
 		Matrix4f position = new Matrix4f();
@@ -70,6 +73,7 @@ public class Demo {
 		VirtualTrackball listener = new VirtualTrackball(camera);
 		WSListener ws = new WSListener(camera);
 		renderPanel.getCanvas().addMouseMotionListener(listener);
+		jframe.addMouseListener(listener);
 		jframe.addKeyListener(ws);
 		renderPanel.getCanvas().addKeyListener(ws);
 

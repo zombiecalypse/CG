@@ -2,9 +2,11 @@ package aaron;
 
 import javax.vecmath.Matrix4f;
 
+import aaron.shapes.IShape;
+
 import jrtr.Camera;
 
-public class CameraObject extends Camera {
+public class CameraObject extends Camera implements IShape {
 	private Matrix4f mat;
 
 	public CameraObject() {
@@ -17,4 +19,17 @@ public class CameraObject extends Camera {
 		m.mul(mat, m);
 		return m;
 	}
+
+	@Override
+	public void setTransformation(Matrix4f t) {
+		mat = t;
+	}
+
+	@Override
+	public Matrix4f getTransformation() {
+		return mat;
+	}
+
+	@Override
+	public void update() {	}
 }

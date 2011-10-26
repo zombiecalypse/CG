@@ -1,6 +1,7 @@
 package jrtr;
 
 import javax.vecmath.*;
+
 import static aaron.Helpers.*;
 
 /**
@@ -122,5 +123,6 @@ public class Camera {
 		ortho.m33 = 1;
 		ortho.invert();
 		cameraMatrix = ortho;
+		this.cacheValid = true;
 	}
 }
