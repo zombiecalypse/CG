@@ -7,12 +7,12 @@ import java.util.TimerTask;
 import javax.swing.JFrame;
 import javax.vecmath.Matrix4f;
 
-import aaron.SimpleRenderPanel;
-import aaron.VirtualTrackball;
-import aaron.WSListener;
 import aaron.shapes.Car;
 import aaron.shapes.ComplexShape;
 import aaron.shapes.IShape;
+import aaron.ui.SimpleRenderPanel;
+import aaron.ui.VirtualTrackball;
+import aaron.ui.WSListener;
 import jrtr.Camera;
 import jrtr.SceneManagerInterface;
 import jrtr.SimpleSceneManager;

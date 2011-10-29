@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
@@ -24,6 +25,48 @@ public class Grid {
 	private Map<Point, List<Point>> connections;
 	private int cols;
 	private int rows;
+	private boolean xconnected;
+	private boolean yconnected;
+	private Normalizator normal;
+	
+	class StdNormalizator implements Normalizator {
+
+		@Override
+		public Vector3f normal(int row, int col, Tuple3f pos) {
+			int left = (col-1)%cols;
+			left = left < 0 ? cols-1 : left;
+			int right = (col+1)%cols;
+			int over = (row + 1)%rows;
+			int under = (row-1)%rows;
+			under = under < 0 ? rows-1 : under;
+			Vector3f gauss = new Vector3f();
+			Vector3f dx = new Vector3f();
+			dx.scaleAdd(3, points[left][row].position); 
+			dx.scaleAdd(-3, points[right][row].position);
+			dx.scaleAdd(1, points[right][under].position);
+			dx.scaleAdd(-1, points[left][under].position);
+			dx.scaleAdd(1, points[right][over].position);
+			dx.scaleAdd(-1, points[left][over].position);
+
+			Vector3f dy = new Vector3f();
+			dy.scaleAdd(3, points[col][under].position);
+			dy.scaleAdd(-3, points[col][over].position);
+			dy.scaleAdd(1, points[left][over].position);
+			dy.scaleAdd(-1, points[left][under].position);
+			dy.scaleAdd(1, points[right][over].position);
+			dy.scaleAdd(-1, points[right][under].position);
+
+			gauss.cross(dy, dx);
+			gauss.normalize();
+			return gauss;
+		}
+		
+	}
+	
+	public Grid setNormal(Normalizator n) {
+		this.normal = n;
+		return this;
+	}
 
 	public Grid(int cols, int rows) {
 		this.rows = rows;
@@ -31,6 +74,7 @@ public class Grid {
 		this.points = new Point[cols][rows];
 		this.normals = new Vector3f[cols][rows];
 		this.connections = new HashMap<Point, List<Point>>();
+		this.normal = new StdNormalizator();
 		for (int row = 0; row < rows; row++)
 			for (int col = 0; col < cols; col++) {
 				points[col][row] = new Point();
@@ -43,6 +87,7 @@ public class Grid {
 			this.connect(0, y).to(this.cols - 1, y);
 			this.connect(0, y).unsafeTo(this.cols - 1, y - 1);
 		}
+		this.xconnected = true;
 		return this;
 	}
 
@@ -51,6 +96,7 @@ public class Grid {
 			this.connect(x, 0).to(x, this.rows - 1);
 			this.connect(x, 0).unsafeTo(x - 1, this.rows - 1);
 		}
+		this.yconnected = true;
 		return this;
 	}
 
@@ -91,28 +137,19 @@ public class Grid {
 
 	private Map<Point, Vector3f> getNormalMap() {
 		Map<Point, Vector3f> normalMap = new HashMap<Point, Vector3f>();
-		for (int row = 1; row + 1 < rows; row++)
-			for (int col = 1; col + 1 < cols; col++) {
-				Vector3f gauss = new Vector3f();
-				Vector3f dx = new Vector3f();
-				dx.scaleAdd(3, points[col + 1][row].position); // Sobel
-				dx.scaleAdd(-3, points[col - 1][row].position);
-				dx.scaleAdd(1, points[col + 1][row - 1].position);
-				dx.scaleAdd(-1, points[col - 1][row - 1].position);
-				dx.scaleAdd(1, points[col + 1][row + 1].position);
-				dx.scaleAdd(-1, points[col - 1][row + 1].position);
-
-				Vector3f dy = new Vector3f();
-				dy.scaleAdd(3, points[col][row + 1].position);
-				dy.scaleAdd(-3, points[col][row - 1].position);
-				dy.scaleAdd(1, points[col - 1][row + 1].position);
-				dy.scaleAdd(-1, points[col - 1][row - 1].position);
-				dy.scaleAdd(1, points[col + 1][row + 1].position);
-				dy.scaleAdd(-1, points[col + 1][row - 1].position);
-
-				gauss.cross(dx, dy);
-				gauss.normalize();
-				normalMap.put(points[col][row], gauss);
+		int botrow = 1, botcol = 1, toprow = rows-1, topcol = cols-1;
+		if (xconnected) {
+			botcol = 0;
+			topcol = cols;
+		}
+		if (yconnected) {
+			botrow = 0;
+			toprow = rows;
+		}
+		for (int row = botrow; row < toprow; row++)
+			for (int col = botcol; col < topcol; col++) {
+				
+				normalMap.put(points[col][row], normal.normal(row, col, points[col][row].position));
 			}
 
 		return normalMap;

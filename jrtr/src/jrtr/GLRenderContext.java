@@ -8,6 +8,8 @@ import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
 import javax.vecmath.*;
 
+import aaron.Helpers;
+
 /**
  * This class implements a {@link RenderContext} (a renderer) using OpenGL
  * version 3 (or later).
@@ -33,8 +35,8 @@ public class GLRenderContext implements RenderContext {
 		// Load and use default shader
 		GLShader defaultShader = new GLShader(gl);
 		try {
-			defaultShader.load("../jrtr/shaders/normal.vert",
-					"../jrtr/shaders/normal.frag");
+			defaultShader.load(Helpers.getHardwareShader(),
+					Helpers.getHardwareShaderFrag());
 		} catch (Exception e) {
 			System.out.print("Problem with shader:\n");
 			System.out.print(e.getMessage());

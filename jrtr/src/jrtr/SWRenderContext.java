@@ -29,7 +29,7 @@ public class SWRenderContext implements RenderContext {
 	private BufferedImage colorBuffer;
 	private float[][] zBuffer;
 	private ArrayList<Point> points;
-	private ArrayList<Triangle> triangles.clear;;
+	private ArrayList<Triangle> triangles;
 
 	public void setSceneManager(SceneManagerInterface sceneManager) {
 		this.sceneManager = sceneManager;

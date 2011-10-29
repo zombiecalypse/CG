@@ -6,6 +6,7 @@ import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
 import aaron.colorizations.Color;
+import aaron.shapes.brushes.CircleBrush;
 
 import jrtr.Shape;
 import jrtr.VertexData;
@@ -28,7 +29,7 @@ public class Torus extends Shape {
 				new Vector3f(0, 0, 0), orientation)) {
 			int tickSmall = 0;
 			Vector3f smallLoopDirection = new Vector3f();
-			smallLoopDirection.cross(orientation, radius);
+			smallLoopDirection.cross(radius, orientation);
 			for (Vector3f torusPiece : new CircleBrush(r,
 					stepsAroundSmallCircle, radius, smallLoopDirection)) {
 				Vector3f variedColor = color.color(tickLarge, tickSmall);
