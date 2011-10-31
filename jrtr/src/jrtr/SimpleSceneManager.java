@@ -13,6 +13,7 @@ import javax.vecmath.Matrix4f;
 
 import aaron.shapes.ComplexShape;
 import aaron.shapes.IShape;
+import aaron.ui.CameraObject;
 
 /**
  * A simple scene manager that stores objects in a linked list.
@@ -20,24 +21,24 @@ import aaron.shapes.IShape;
 public class SimpleSceneManager implements SceneManagerInterface {
 
 	private Map<Shape, Matrix4f> shapes;
-	private Camera camera;
+	private CameraObject camera;
 	private Frustum frustum;
 
 	public SimpleSceneManager() {
-		this(new Camera(), new Frustum());
+		this(new CameraObject(), new Frustum());
 	}
 
-	public SimpleSceneManager(Camera c) {
+	public SimpleSceneManager(CameraObject c) {
 		this(c, new Frustum());
 	}
 
-	public SimpleSceneManager(Camera c, Frustum f) {
+	public SimpleSceneManager(CameraObject c, Frustum f) {
 		camera = c;
 		frustum = f;
 		shapes = new HashMap<Shape, Matrix4f>();
 	}
 
-	public Camera getCamera() {
+	public CameraObject getCamera() {
 		return camera;
 	}
 

@@ -10,6 +10,7 @@ import javax.vecmath.Matrix4f;
 import aaron.shapes.Car;
 import aaron.shapes.ComplexShape;
 import aaron.shapes.IShape;
+import aaron.ui.CameraObject;
 import aaron.ui.SimpleRenderPanel;
 import aaron.ui.VirtualTrackball;
 import aaron.ui.WSListener;
@@ -35,7 +36,7 @@ public class Demo {
 		}
 	}
 	
-	private Camera camera;
+	private CameraObject camera;
 	private SimpleSceneManager scenemanager;
 	private SimpleRenderPanel renderPanel;
 	private VirtualTrackball listener;
@@ -54,14 +55,13 @@ public class Demo {
 	
 	public void update() {
 	}
-
-	private void createScene() {
-		ComplexShape shape = new Car();
-		Matrix4f position = new Matrix4f();
-		position.setIdentity();
+	
+	public void addShape(IShape shape, Matrix4f position) {
+		this.shapes.add(shape);
 		scenemanager.addShape(shape, position);
-		shapes.add(shape);
 	}
+
+	protected void createScene() {	}
 
 	public void display() {
 		JFrame jframe = new JFrame("simple");

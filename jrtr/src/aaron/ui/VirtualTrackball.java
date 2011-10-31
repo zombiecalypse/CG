@@ -18,9 +18,9 @@ import jrtr.Camera;
 public class VirtualTrackball implements GLEventListener, MouseMotionListener,
 		MouseListener {
 	private Integer startX, startY;
-	private Camera camera;
+	private CameraObject camera;
 
-	public VirtualTrackball(Camera camera) {
+	public VirtualTrackball(CameraObject camera) {
 		this.camera = camera;
 	}
 
@@ -30,7 +30,7 @@ public class VirtualTrackball implements GLEventListener, MouseMotionListener,
 		if (startX != null && startY != null) {
 			int dx = startX - endX;
 			int dy = startY - endY;
-			AxisAngle4f xTurn = new AxisAngle4f(0, 0, 1,
+			AxisAngle4f xTurn = new AxisAngle4f(0, 1, 0,
 					(float) (dx * Math.PI / 250));
 			AxisAngle4f yTurn = new AxisAngle4f(1, 0, 0,
 					(float) (dy * Math.PI / 250));
@@ -39,7 +39,12 @@ public class VirtualTrackball implements GLEventListener, MouseMotionListener,
 			Matrix4f yTurnMat = new Matrix4f();
 			yTurnMat.set(yTurn);
 			Matrix4f turnMat = new Matrix4f();
-			turnMat.mul(yTurnMat, xTurnMat);
+			turnMat.setIdentity();
+			turnMat.set(camera.getCameraMatrix());
+			turnMat.invert();
+			turnMat.mul(xTurnMat);
+			turnMat.mul(yTurnMat);
+			turnMat.mul(camera.getCameraMatrix());
 			camera.transform(turnMat);
 		}
 		startX = endX;

@@ -2,6 +2,7 @@ package aaron.shapes;
 
 import java.util.Random;
 
+import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
 import aaron.colorizations.Color;
@@ -18,7 +19,7 @@ public class SimpleLandscape extends Shape {
 	private static final float fluxMod = 0.125f;
 
 	public SimpleLandscape() {
-		super(makeLandscape(8, color));
+		super(makeLandscape(6, color));
 	}
 
 	/**
@@ -34,6 +35,12 @@ public class SimpleLandscape extends Shape {
 		float heightMap[][] = new float[dim][dim];
 		randomHeightMap(heightMap, 0, 0, dim - 1, dim - 1);
 		Grid grid = new Grid(dim + 2, dim + 2);
+//		grid.setNormal(new Normalizator() {
+//			@Override
+//			public Vector3f normal(int row, int col, Tuple3f pos) {
+//				return Z;
+//			}
+//		});
 		float planeStep = 1.0f / ((float) dim);
 		float min = Float.MAX_VALUE;
 		for (int row = 0; row < dim; row++)

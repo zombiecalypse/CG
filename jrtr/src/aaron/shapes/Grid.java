@@ -21,6 +21,7 @@ import jrtr.VertexData;
  */
 public class Grid {
 	private Point[][] points;
+	private List<Point> additionalPoints;
 	private Vector3f[][] normals;
 	private Map<Point, List<Point>> connections;
 	private int cols;
@@ -56,7 +57,7 @@ public class Grid {
 			dy.scaleAdd(1, points[right][over].position);
 			dy.scaleAdd(-1, points[right][under].position);
 
-			gauss.cross(dy, dx);
+			gauss.cross(dx, dy);
 			gauss.normalize();
 			return gauss;
 		}
@@ -74,6 +75,7 @@ public class Grid {
 		this.points = new Point[cols][rows];
 		this.normals = new Vector3f[cols][rows];
 		this.connections = new HashMap<Point, List<Point>>();
+		this.additionalPoints = new ArrayList<Point>();
 		this.normal = new StdNormalizator();
 		for (int row = 0; row < rows; row++)
 			for (int col = 0; col < cols; col++) {

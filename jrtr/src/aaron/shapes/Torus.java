@@ -22,7 +22,7 @@ public class Torus extends Shape {
 
 	private static VertexData grid(float r, float R,
 			int stepsAroundSmallCircle, int stepsAroundBigCircle, Color color) {
-		Grid points = new Grid(stepsAroundBigCircle, stepsAroundSmallCircle);
+		Grid points = new Grid(stepsAroundSmallCircle, stepsAroundBigCircle);
 		int tickLarge = 0;
 		Vector3f orientation = new Vector3f(0, 0, 1);
 		for (Vector3f radius : new CircleBrush(R, stepsAroundBigCircle,
@@ -33,7 +33,7 @@ public class Torus extends Shape {
 			for (Vector3f torusPiece : new CircleBrush(r,
 					stepsAroundSmallCircle, radius, smallLoopDirection)) {
 				Vector3f variedColor = color.color(tickLarge, tickSmall);
-				points.set(tickLarge, tickSmall).to(torusPiece).in(variedColor);
+				points.set(tickSmall, tickLarge).to(torusPiece).in(variedColor);
 				tickSmall++;
 			}
 			tickLarge++;
