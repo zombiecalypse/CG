@@ -2,6 +2,8 @@ package jrtr;
 
 import java.util.Iterator;
 
+import aaron.light.Light;
+
 /**
  * An interface declaration for scene managers. Scene managers need to provide
  * an iterator to traverse through all objects in the scene. The interface does
@@ -24,4 +26,6 @@ public interface SceneManagerInterface {
 	public Camera getCamera();
 
 	public Frustum getFrustum();
+
+	public Iterable<Light> getLights();
 }

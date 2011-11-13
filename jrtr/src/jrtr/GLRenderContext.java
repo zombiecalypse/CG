@@ -4,11 +4,17 @@ import java.nio.IntBuffer;
 import java.nio.FloatBuffer;
 import java.util.LinkedList;
 import java.util.ListIterator;
+
+import javax.media.opengl.GL2;
 import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.fixedfunc.GLLightingFunc;
 import javax.vecmath.*;
 
 import aaron.Helpers;
+import aaron.light.Light;
+import aaron.light.TooManyLightsException;
+import aaron.light.Light.LightData;
 
 /**
  * This class implements a {@link RenderContext} (a renderer) using OpenGL
@@ -79,7 +85,10 @@ public class GLRenderContext implements RenderContext {
 	 * drawing starts.
 	 */
 	private void beginFrame() {
-		setLights();
+		try {
+			setLights();
+		} catch (TooManyLightsException e) {
+		}
 
 		gl.glClear(GL3.GL_COLOR_BUFFER_BIT);
 		gl.glClear(GL3.GL_DEPTH_BUFFER_BIT);
@@ -222,8 +231,46 @@ public class GLRenderContext implements RenderContext {
 	 * lightIterator().
 	 * 
 	 * To be implemented in the "Textures and Shading" project.
+	 * @throws TooManyLightsException 
 	 */
-	void setLights() {
+	void setLights() throws TooManyLightsException {
+		GL2 gl2 =gl.getGL2(); 
+		int lights[] = {GLLightingFunc.GL_LIGHT0,GLLightingFunc.GL_LIGHT1,GLLightingFunc.GL_LIGHT2,GLLightingFunc.GL_LIGHT3,
+				GLLightingFunc.GL_LIGHT4,GLLightingFunc.GL_LIGHT5,GLLightingFunc.GL_LIGHT6,GLLightingFunc.GL_LIGHT7};
+		int i = 0;
+		for (Light light : this.sceneManager.getLights()) {
+			if (i > 7)
+				throw new TooManyLightsException("No support for this many light sources");
+			gl2.glEnable(lights[i]);
+			LightData lightData = light.getData();
+			FloatBuffer buffer = FloatBuffer.allocate(8*4*17);
+			writeToBuffer(buffer,lightData.ambient);
+			gl2.glLightfv(lights[i], GLLightingFunc.GL_AMBIENT, buffer);
+			writeToBuffer(buffer,lightData.diffuse);
+			gl2.glLightfv(lights[i], GLLightingFunc.GL_DIFFUSE, buffer);
+			writeToBuffer(buffer,lightData.position);
+			gl2.glLightfv(lights[i], GLLightingFunc.GL_POSITION, buffer);
+			writeToBuffer(buffer,lightData.specular);
+			gl2.glLightfv(lights[i], GLLightingFunc.GL_SPECULAR, buffer);
+			writeToBuffer(buffer,lightData.spot_direction);
+			gl2.glLightfv(lights[i], GLLightingFunc.GL_SPOT_DIRECTION, buffer);
+			writeToBuffer(buffer,lightData.spot_cutoff);
+			gl2.glLightfv(lights[i], GLLightingFunc.GL_SPOT_CUTOFF, buffer);
+			writeToBuffer(buffer,lightData.spot_exponent);
+			gl2.glLightfv(lights[i], GLLightingFunc.GL_SPOT_EXPONENT, buffer);
+			i++;
+		}
+	}
+	
+	private void writeToBuffer(FloatBuffer buffer, float val) {
+		buffer.put(val);
+	}
+
+	private void writeToBuffer(FloatBuffer arr, Vector4f v) {
+		arr.put(v.x);
+		arr.put(v.y);
+		arr.put(v.z);
+		arr.put(v.w);
 	}
 
 	/**

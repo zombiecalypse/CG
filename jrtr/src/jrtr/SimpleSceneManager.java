@@ -1,6 +1,7 @@
 package jrtr;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -11,6 +12,7 @@ import java.util.Set;
 
 import javax.vecmath.Matrix4f;
 
+import aaron.light.Light;
 import aaron.shapes.ComplexShape;
 import aaron.shapes.IShape;
 import aaron.ui.CameraObject;
@@ -23,6 +25,7 @@ public class SimpleSceneManager implements SceneManagerInterface {
 	private Map<Shape, Matrix4f> shapes;
 	private CameraObject camera;
 	private Frustum frustum;
+	private Set<Light> lightSources;
 
 	public SimpleSceneManager() {
 		this(new CameraObject(), new Frustum());
@@ -36,6 +39,7 @@ public class SimpleSceneManager implements SceneManagerInterface {
 		camera = c;
 		frustum = f;
 		shapes = new HashMap<Shape, Matrix4f>();
+		lightSources = new HashSet<Light>();
 	}
 
 	public CameraObject getCamera() {
@@ -95,11 +99,22 @@ public class SimpleSceneManager implements SceneManagerInterface {
 		return new SimpleSceneManagerItr(this);
 	}
 
+	
+	public void addLight(Light light) {
+		this.lightSources.add(light);
+	}
+	public void removeLight(Light light) {
+		this.lightSources.remove(light);
+	}
 	/**
 	 * To be implemented in the "Textures and Shading" project.
 	 */
 	public Iterator<Light> lightIterator() {
-		return null;
+		return this.lightSources.iterator();
+	}
+	
+	public Iterable<Light> getLights() {
+		return this.lightSources;
 	}
 
 	private class SimpleSceneManagerItr implements SceneManagerIterator {
