@@ -3,7 +3,6 @@ package aaron.light;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector4f;
 
-import aaron.light.Light.LightData;
 
 public class LightObject extends Light{
 	protected Vector4f position;
