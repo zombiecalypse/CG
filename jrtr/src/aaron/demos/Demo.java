@@ -6,7 +6,9 @@ import java.util.TimerTask;
 
 import javax.swing.JFrame;
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector4f;
 
+import aaron.light.RadialLight;
 import aaron.shapes.Car;
 import aaron.shapes.ComplexShape;
 import aaron.shapes.IShape;
@@ -61,7 +63,9 @@ public class Demo {
 		scenemanager.addShape(shape, position);
 	}
 
-	protected void createScene() {	}
+	protected void createScene() {	
+		this.scenemanager.addLight(new RadialLight(new Vector4f(1,1,1,1), new Vector4f(0,0,4,1)));
+	}
 
 	public void display() {
 		JFrame jframe = new JFrame("simple");
