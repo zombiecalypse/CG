@@ -5,6 +5,7 @@ import java.nio.FloatBuffer;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
@@ -25,6 +26,7 @@ public class GLRenderContext implements RenderContext {
 	private SceneManagerInterface sceneManager;
 	private GL3 gl;
 	private GLShader activeShader;
+	private Material material;
 
 	/**
 	 * This constructor is called by {@link GLRenderPanel}.
@@ -135,6 +137,7 @@ public class GLRenderContext implements RenderContext {
 
 		// Compute the modelview matrix by multiplying the camera matrix and the
 		// transformation matrix of the object
+
 		Matrix4f t = new Matrix4f();
 		t.set(sceneManager.getCamera().getCameraMatrix());
 		t.mul(renderItem.getT());
@@ -223,6 +226,24 @@ public class GLRenderContext implements RenderContext {
 	 * To be implemented in the "Textures and Shading" project.
 	 */
 	private void setMaterial(Material m) {
+		GL2 gl2 = gl.getGL2();
+		if (m.hasTexture()) {
+			gl.glBindTexture(GL.GL_TEXTURE_2D, m.getTexture().getId());
+		}
+		
+		activeShader = m.getShader();
+		gl2.glMaterialfv(GL.GL_FRONT_AND_BACK,GLLightingFunc.GL_AMBIENT_AND_DIFFUSE , toBuffer(m.getDiffuse()));
+		gl2.glMaterialfv(GL.GL_FRONT_AND_BACK, GLLightingFunc.GL_SPECULAR, toBuffer(m.getSpecular()));
+		gl2.glMaterialf(GL.GL_FRONT_AND_BACK, GLLightingFunc.GL_SHININESS, m.getShininess());
+	}
+	
+	static private FloatBuffer toBuffer(Vector4f v) {
+		FloatBuffer buffer = FloatBuffer.allocate(4);
+		buffer.put(v.x);
+		buffer.put(v.y);
+		buffer.put(v.z);
+		buffer.put(v.w);
+		return buffer;
 	}
 
 	/**

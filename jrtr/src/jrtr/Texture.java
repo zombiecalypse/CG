@@ -8,4 +8,6 @@ import java.io.IOException;
 public interface Texture {
 
 	public void load(String fileName) throws IOException;
+	
+	public int getId();
 }

@@ -10,4 +10,9 @@ public class SWTexture implements Texture {
 	public void load(String fileName) throws IOException {
 	}
 
+	@Override
+	public int getId() {
+		return 0;
+	}
+
 }
