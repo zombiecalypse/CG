@@ -12,6 +12,8 @@ public class LightObject extends Light{
 
 	public LightObject(Vector4f radiance) {
 		super(radiance);
+		this.transform = new Matrix4f();
+		this.transform.setIdentity();
 	}
 
 	@Override

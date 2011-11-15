@@ -10,6 +10,8 @@ import aaron.shapes.IShape;
  */
 public class Shape implements IShape {
 
+	public Material material;
+
 	/**
 	 * Make a shape from {@link VertexData}.
 	 * 
@@ -17,14 +19,14 @@ public class Shape implements IShape {
 	 *            the vertices of the shape.
 	 */
 	public Shape(VertexData vertexData) {
+		this();
 		this.vertexData = vertexData;
-		t = new Matrix4f();
-		t.setIdentity();
 	}
 
 	public Shape() {
 		t = new Matrix4f();
 		t.setIdentity();
+		this.material = new Material();
 	}
 
 	public VertexData getVertexData() {
@@ -44,13 +46,14 @@ public class Shape implements IShape {
 	 * To be implemented in the "Textures and Shading" project.
 	 */
 	public void setMaterial(Material material) {
+		this.material = material;
 	}
 
 	/**
 	 * To be implemented in the "Textures and Shading" project.
 	 */
 	public Material getMaterial() {
-		return null;
+		return this.material;
 	}
 
 	protected VertexData vertexData;

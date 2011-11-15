@@ -2,6 +2,8 @@ package aaron.light;
 
 import javax.vecmath.Vector4f;
 
+import jrtr.Material;
+
 import aaron.shapes.IShape;
 
 /**
@@ -16,6 +18,12 @@ public abstract class Light implements IShape {
 	}
 	
 	public abstract LightData getData();
+	public Material getMaterial() {
+		return null;
+	}
+
+	public void setMaterial(Material material) {
+	}
 	public class LightData {
 		public Vector4f 
 			ambient,

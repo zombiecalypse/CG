@@ -2,6 +2,7 @@ package jrtr;
 
 import java.nio.FloatBuffer;
 
+import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
 import aaron.colorizations.Color;
@@ -13,7 +14,7 @@ import aaron.colorizations.Color;
 public class Material {
 	private GLShader shader;
 	private Texture texture;
-	private Color color;
+	private Vector4f color;
 	private Vector4f diffuse;
 	private Vector4f specular;
 	private float shininess;
@@ -27,19 +28,15 @@ public class Material {
 		this(shader);
 		this.texture = texture;
 	}
-	
-	public Material(GLShader shader, Color color) {
-		this(shader);
-		this.color = color;
-	}
 
 	public Material() {
 		this.diffuse = new Vector4f();
 		this.specular = new Vector4f();
 		this.shininess = 0;
+		this.color = new Vector4f(0.5f,0.5f,0.5f,1);
 	}
 	
-	public Color getColor() {
+	public Vector4f getColor() {
 		return color;
 	}
 	
@@ -52,7 +49,7 @@ public class Material {
 	}
 
 	public boolean hasTexture() {
-		return texture == null;
+		return texture != null;
 	}
 
 	public Vector4f getDiffuse() {

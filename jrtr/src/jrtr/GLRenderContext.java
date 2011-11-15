@@ -228,7 +228,8 @@ public class GLRenderContext implements RenderContext {
 	private void setMaterial(Material m) {
 		GL2 gl2 = gl.getGL2();
 		if (m.hasTexture()) {
-			gl.glBindTexture(GL.GL_TEXTURE_2D, m.getTexture().getId());
+			Texture tex = m.getTexture();
+			gl.glBindTexture(GL.GL_TEXTURE_2D, tex.getId());
 		}
 		
 		activeShader = m.getShader();

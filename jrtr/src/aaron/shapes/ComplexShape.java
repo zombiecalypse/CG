@@ -9,6 +9,7 @@ import javax.vecmath.Vector3f;
 
 import aaron.shapes.ComplexShape.Adder;
 
+import jrtr.Material;
 import jrtr.RenderItem;
 import jrtr.Shape;
 import jrtr.VertexData;
@@ -24,6 +25,7 @@ public class ComplexShape implements IShape {
 	private static final Vector3f X = new Vector3f(1, 0, 0);
 	private List<IShape> subshapes;
 	protected Matrix4f transformation;
+	private Material material;
 
 	public ComplexShape() {
 		subshapes = new ArrayList<IShape>();
@@ -135,5 +137,13 @@ public class ComplexShape implements IShape {
 	public void update() {
 		for (IShape s : subshapes)
 			s.update();
+	}
+
+	public Material getMaterial() {
+		return this.material;
+	}
+
+	public void setMaterial(Material material) {
+		this.material =material;
 	}
 }

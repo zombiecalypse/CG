@@ -7,10 +7,14 @@ import javax.vecmath.Vector3f;
 import aaron.shapes.IShape;
 
 import jrtr.Camera;
+import jrtr.Material;
 
 public class CameraObject extends Camera implements IShape {
 
+	private Material material;
+
 	public CameraObject() {
+		this.material = new Material();
 	}
 
 //	public Matrix4f getCameraMatrix() {
@@ -41,4 +45,11 @@ public class CameraObject extends Camera implements IShape {
 
 	@Override
 	public void update() {	}
+
+	public Material getMaterial() {
+		return this.material;
+	}
+
+	@Override
+	public void setMaterial(Material material) {	}
 }
