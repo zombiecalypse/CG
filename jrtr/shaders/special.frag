@@ -25,6 +25,18 @@ vec4 light() {
 	}
   return ret;
 }
+
+vec4 color(vec2 tex) {
+	return vec4(1,1,0,0);
+}
+
+bool draw(vec2 tex) {
+	return (fract(tex.x) < 0.1) && (fract(tex.y) < 0.1);
+}
+
 void main() {		
-	out_color = texture2D(texture, textureCoord)+ light();
+	if (not draw(textureCoord)) {
+		discard;
+	}
+	out_color = color(textureCoord)+ light();
 }
