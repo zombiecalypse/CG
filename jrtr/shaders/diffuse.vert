@@ -10,7 +10,7 @@ out vec4 frag_color;
 vec4 diffuse() {
 	vec4 ret;
 	for (int i = 0; i < 8; i++) {
-		vec4 lightdir = reflect(gl_LightSource[i].position - position, normal);
+		vec4 lightdir = gl_LightSource[i].position - position, normal;
 		float ank = max(0.0,dot(lightdir, normal));
 		ret += ank *gl_LightSource[i].diffuse;
 	}
